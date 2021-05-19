@@ -381,7 +381,6 @@ class DefaultTrainer(TrainerBase):
         optimizer = self.build_optimizer(cfg, model)
         data_loader = self.build_train_loader(cfg)
         # Overwriting the build_train_loader method to use our own dataloader.
-        print(data_loader.dataset_dicts)
 
         model = create_ddp_model(model, broadcast_buffers=False)
         self._trainer = (AMPTrainer if cfg.SOLVER.AMP.ENABLED else SimpleTrainer)(
@@ -541,8 +540,9 @@ class DefaultTrainer(TrainerBase):
         It now calls :func:`detectron2.data.build_detection_train_loader`.
         Overwrite it if you'd like a different data loader.
         """
-        return build_detection_train_loader(cfg, mapper=DatasetMapper(cfg,
-            dataset_dicts={1:2, 2:3}))
+        mapper_ex = DatasetMapper(cfg, dataset_dicts={1:2, 2:3})
+        print(mapper_ex.dataset_dicts)
+        return build_detection_train_loader(cfg, mapper=mapper_ex)
 
     @classmethod
     def build_test_loader(cls, cfg, dataset_name):
