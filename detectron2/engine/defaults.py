@@ -47,6 +47,9 @@ from detectron2.utils.logger import setup_logger
 from . import hooks
 from .train_loop import AMPTrainer, SimpleTrainer, TrainerBase
 
+# import DatasetMapper class
+from detectron2.data import DatasetMapper
+
 __all__ = [
     "create_ddp_model",
     "default_argument_parser",
