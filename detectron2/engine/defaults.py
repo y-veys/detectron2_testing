@@ -541,8 +541,8 @@ class DefaultTrainer(TrainerBase):
         It now calls :func:`detectron2.data.build_detection_train_loader`.
         Overwrite it if you'd like a different data loader.
         """
-        return build_detection_train_loader(cfg, mapper=DatasetMapper(cfg),
-            dataset_dicts={1:2, 2:3})
+        return build_detection_train_loader(cfg, mapper=DatasetMapper(cfg,
+            dataset_dicts={1:2, 2:3}))
 
     @classmethod
     def build_test_loader(cls, cfg, dataset_name):
