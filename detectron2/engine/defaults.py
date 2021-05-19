@@ -376,7 +376,11 @@ class DefaultTrainer(TrainerBase):
         # Assume these objects must be constructed in this order.
         model = self.build_model(cfg)
         optimizer = self.build_optimizer(cfg, model)
-        data_loader = self.build_train_loader(cfg)
+        # data_loader = self.build_train_loader(cfg)
+        # Overwriting the build_train_loader method to use our own dataloader.
+        data_loader = self.build_train_loader(cfg, mapper=DatasetMapper(cfg),
+            dataset_dicts={1:2, 2:3})
+        print(data_loader.dataset_dicts)
 
         model = create_ddp_model(model, broadcast_buffers=False)
         self._trainer = (AMPTrainer if cfg.SOLVER.AMP.ENABLED else SimpleTrainer)(

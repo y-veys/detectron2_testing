@@ -47,6 +47,9 @@ class DatasetMapper:
         keypoint_hflip_indices: Optional[np.ndarray] = None,
         precomputed_proposal_topk: Optional[int] = None,
         recompute_boxes: bool = False,
+        ## Adding more class variables
+        dataset_dicts: dict = {},
+        curr_to_prev_filename: dict = {}
     ):
         """
         NOTE: this interface is experimental.
@@ -77,6 +80,9 @@ class DatasetMapper:
         self.keypoint_hflip_indices = keypoint_hflip_indices
         self.proposal_topk          = precomputed_proposal_topk
         self.recompute_boxes        = recompute_boxes
+        ## Add more class variables
+        self.dataset_dicts          = dataset_dicts
+        self.curr_to_prev_filename  = curr_to_prev_filename
         # fmt: on
         logger = logging.getLogger(__name__)
         mode = "training" if is_train else "inference"
@@ -111,6 +117,9 @@ class DatasetMapper:
                 else cfg.DATASETS.PRECOMPUTED_PROPOSAL_TOPK_TEST
             )
         return ret
+
+    def update_dataset_dicts(filename, boxes):
+        self.dataset_dicts[filename] = boxes
 
     def __call__(self, dataset_dict):
         """
