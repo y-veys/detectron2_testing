@@ -365,7 +365,8 @@ class DefaultTrainer(TrainerBase):
         cfg (CfgNode):
     """
 
-    def __init__(self, cfg):
+    def __init__(self, cfg, dataset_dicts=None, curr_to_prev_filename=None,
+        curr_to_prev_img_id=None):
         """
         Args:
             cfg (CfgNode):
@@ -379,8 +380,10 @@ class DefaultTrainer(TrainerBase):
         # Assume these objects must be constructed in this order.
         model = self.build_model(cfg)
         optimizer = self.build_optimizer(cfg, model)
-        data_loader = self.build_train_loader(cfg)
-        # Overwriting the build_train_loader method to use our own dataloader.
+
+        # Changed parameters for build_train_loader in this class
+        data_loader = self.build_train_loader(cfg, dataset_dicts, curr_to_prev_filename, 
+            curr_to_prev_img_id)
 
         model = create_ddp_model(model, broadcast_buffers=False)
         self._trainer = (AMPTrainer if cfg.SOLVER.AMP.ENABLED else SimpleTrainer)(
@@ -532,7 +535,8 @@ class DefaultTrainer(TrainerBase):
         return build_lr_scheduler(cfg, optimizer)
 
     @classmethod
-    def build_train_loader(cls, cfg):
+    def build_train_loader(cls, cfg, dataset_dicts, curr_to_prev_filename, 
+        curr_to_prev_img_id):
         """
         Returns:
             iterable
@@ -540,9 +544,13 @@ class DefaultTrainer(TrainerBase):
         It now calls :func:`detectron2.data.build_detection_train_loader`.
         Overwrite it if you'd like a different data loader.
         """
-        mapper_ex = DatasetMapper(cfg, dataset_dicts={1:2, 2:3})
-        print(mapper_ex.dataset_dicts)
-        return build_detection_train_loader(cfg, mapper=mapper_ex)
+        mapper = DatasetMapper(cfg, 
+            dataset_dicts=dataset_dicts, 
+            curr_to_prev_filename = curr_to_prev_filename,
+            curr_to_prev_img_id = curr_to_prev_img_id)
+
+        print(mapper.curr_to_prev_img_id)
+        return build_detection_train_loader(cfg, mapper=mapper)
 
     @classmethod
     def build_test_loader(cls, cfg, dataset_name):
