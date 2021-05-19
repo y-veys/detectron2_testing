@@ -49,7 +49,8 @@ class DatasetMapper:
         recompute_boxes: bool = False,
         ## Adding more class variables
         dataset_dicts: dict = {},
-        curr_to_prev_filename: dict = {}
+        curr_to_prev_filename: dict = {},
+        curr_to_prev_img_id: dict = {}
     ):
         """
         NOTE: this interface is experimental.
@@ -83,6 +84,7 @@ class DatasetMapper:
         ## Add more class variables
         self.dataset_dicts          = dataset_dicts
         self.curr_to_prev_filename  = curr_to_prev_filename
+        self.curr_to_prev_img_id    = curr_to_prev_img_id
         # fmt: on
         logger = logging.getLogger(__name__)
         mode = "training" if is_train else "inference"
