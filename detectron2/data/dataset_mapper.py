@@ -303,7 +303,7 @@ class DatasetMapper:
         
         # Add the 4th channel to the image 
         fourth_ch = self.create_prev_box_masks(self.dataset_dicts, dataset_dict) 
-        numpy.dstack((fourth_channel, image))
+        np.dstack((fourth_channel, image))
         print(np.shape(image))
         print(image)
         
