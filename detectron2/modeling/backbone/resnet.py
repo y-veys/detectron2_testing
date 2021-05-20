@@ -353,6 +353,9 @@ class BasicStem(CNNBlockBase):
         weight_init.c2_msra_fill(self.conv1)
 
     def forward(self, x):
+        # Adjust type to agree with weights
+        x = float(x)
+
         x = self.conv1(x)
         x = F.relu_(x)
         x = F.max_pool2d(x, kernel_size=3, stride=2, padding=1)

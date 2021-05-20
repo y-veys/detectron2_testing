@@ -81,6 +81,9 @@ class Conv2d(torch.nn.Conv2d):
                     self.norm, torch.nn.SyncBatchNorm
                 ), "SyncBatchNorm does not support empty inputs!"
 
+        ## Adding code because of type disagreement
+        # x = x.type(torch.cuda.FloatTensor)
+
         x = F.conv2d(
             x, self.weight, self.bias, self.stride, self.padding, self.dilation, self.groups
         )
