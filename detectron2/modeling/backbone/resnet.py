@@ -355,7 +355,8 @@ class BasicStem(CNNBlockBase):
     def forward(self, x):
         # Adjust type to agree with weights
         print(type(x))
-        tensor.type(torch.FloatTensor)
+        x = x.type(torch.FloatTensor)
+        print(x.type)
 
         x = self.conv1(x)
         x = F.relu_(x)
