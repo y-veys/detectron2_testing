@@ -272,10 +272,6 @@ class DatasetMapper:
 
           return mask
 
-    #dataset_dicts = get_balloon_dicts("balloon/train")
-    luderick_train_metadata = MetadataCatalog.get("luderick_train_a")
-    dataset_dicts = DatasetCatalog.get("luderick_train_a")
-
     def update_dataset_dicts(filename, boxes):
         # Optimally, want dataset_dicts to have the same format as 
         # the dataset dicts for detectron2
@@ -294,11 +290,13 @@ class DatasetMapper:
         # image should be HWC numpy array
         image = utils.read_image(dataset_dict["file_name"], format=self.image_format)
         
+        '''
         # Add the 4th channel to the image 
         fourth_ch = create_prev_box_masks(self.dataset_dicts, dataset_dict) 
         numpy.dstack((fourth_channel, image))
         print(np.shape(image))
         print(image)
+        '''
 
         utils.check_image_size(dataset_dict, image)
 
