@@ -155,7 +155,7 @@ class DatasetMapper:
         prev_img_id = curr_to_prev_img_id[str(img_id)]
 
         # Find the index of the previous image in the dataset_dicts list 
-        i = self.dataset_dicts_index(dataset_dicts, prev_img_name)
+        i = self.dataset_dicts_index(self.dataset_dicts, prev_img_name)
 
         height = 1080
         width = 1920
@@ -169,11 +169,13 @@ class DatasetMapper:
           # Get the dictionary and annotations
           prev_img_dict = dataset_dicts[i]
           
+          '''
           # Visualization for debugging
           im = cv2.imread(prev_img_dict["file_name"])
           visualizer = Visualizer(img[:, :, ::-1], metadata=luderick_train_metadata, scale=0.5)
           out = visualizer.draw_dataset_dict(prev_img_dict)
           cv2_imshow(out.get_image()[:, :, ::-1])
+          '''
 
           annotations = prev_img_dict["annotations"]
 
@@ -221,8 +223,8 @@ class DatasetMapper:
         # Parse the image name from the image path by taking the 
         # substring after the last /
         img_name = img_path[img_path.rindex("/")+1:]
-        prev_img_name = curr_to_prev_filename[img_name]
-        prev_img_id = curr_to_prev_img_id[str(img_id)]
+        prev_img_name = self.curr_to_prev_filename[img_name]
+        prev_img_id = self.curr_to_prev_img_id[str(img_id)]
 
         # Find the index of the previous image in the dataset_dicts list 
         i = self.dataset_dicts_index(dataset_dicts, prev_img_name)
@@ -239,11 +241,13 @@ class DatasetMapper:
           # Get the dictionary and annotations
           prev_img_dict = dataset_dicts[i]
           
+          '''
           # Visualization for debugging
           im = cv2.imread(prev_img_dict["file_name"])
           visualizer = Visualizer(img[:, :, ::-1], metadata=luderick_train_metadata, scale=0.5)
           out = visualizer.draw_dataset_dict(prev_img_dict)
           cv2_imshow(out.get_image()[:, :, ::-1])
+          '''
 
           annotations = prev_img_dict["annotations"]
 
