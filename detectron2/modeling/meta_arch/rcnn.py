@@ -145,8 +145,6 @@ class GeneralizedRCNN(nn.Module):
         if not self.training:
             return self.inference(batched_inputs)
 
-        print(batched_inputs[0])
-        print(batched_inputs)
         images = self.preprocess_image(batched_inputs)
         if "instances" in batched_inputs[0]:
             gt_instances = [x["instances"].to(self.device) for x in batched_inputs]
@@ -223,6 +221,19 @@ class GeneralizedRCNN(nn.Module):
         """
         Normalize, pad and batch the input images.
         """
+        # Print some things for testing purposes
+        test_x_b = batched_inputs[0]
+        test_x = images[0]
+
+        print('first line:')
+        print(test_x_b["image"].to(self.device))
+        print('second line:')
+        print(test_x)
+        print('third line:')
+        print(self.pixel_mean)
+        print('fourth line:')
+        print(self.pixel_std)
+
         images = [x["image"].to(self.device) for x in batched_inputs]
         images = [(x - self.pixel_mean) / self.pixel_std for x in images]
         images = ImageList.from_tensors(images, self.backbone.size_divisibility)
