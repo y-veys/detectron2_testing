@@ -190,7 +190,8 @@ class DatasetMapper:
 
             for i in range(y,y+h):
               for j in range(x,x+w):
-                mask[i,j] = 255
+                if i >= 0 and i < height and j >= 0 and j < width: 
+                  mask[i,j] = 255
             
           return mask
 
@@ -274,11 +275,12 @@ class DatasetMapper:
             # For each coordinate in the box, determine it's black/white color
             for i in range(y, y + h):
               for j in range(x, x + w):
-                  pt = (j,i)
-                  mu = (mu_x, mu_y)
-                  sigma = (sigma_x, sigma_y)
-                  c_val = int(self.two_dim_gaussian(pt, mu, sigma))
-                  mask[i,j] = c_val
+                  if i >= 0 and i < height and j >= 0 and j < width: 
+                    pt = (j,i)
+                    mu = (mu_x, mu_y)
+                    sigma = (sigma_x, sigma_y)
+                    c_val = int(self.two_dim_gaussian(pt, mu, sigma))
+                    mask[i,j] = c_val
 
           return mask
 
