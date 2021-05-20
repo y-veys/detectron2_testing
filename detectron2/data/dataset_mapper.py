@@ -279,7 +279,7 @@ class DatasetMapper:
     def update_dataset_dicts(filename, boxes):
         # Optimally, want dataset_dicts to have the same format as 
         # the dataset dicts for detectron2
-        # self.dataset_dicts[filename] =
+        self.dataset_dicts[filename] = boxes
 
     def __call__(self, dataset_dict):
         """
