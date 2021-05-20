@@ -230,11 +230,11 @@ class GeneralizedRCNN(nn.Module):
 
         test_x = images[0]
         print('second line:')
-        print(test_x)
+        print(np.shape(test_x))
         print('third line:')
-        print(self.pixel_mean)
+        print(np.shape(self.pixel_mean))
         print('fourth line:')
-        print(self.pixel_std)
+        print(np.shape(self.pixel_std))
 
         images = [(x - self.pixel_mean) / self.pixel_std for x in images]
         images = ImageList.from_tensors(images, self.backbone.size_divisibility)
