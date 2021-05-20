@@ -120,8 +120,166 @@ class DatasetMapper:
             )
         return ret
 
+    def dataset_dicts_index(dataset_dicts, img_name):
+        '''
+        Iterate through the dataset_dicts list and find the index of the image
+        with id img_id. If the image cannot be found, -1 is returned. 
+        '''
+        i = 0
+        for d in dataset_dicts:
+          dict_img_path = d["file_name"]
+          dict_img_name = dict_img_path[dict_img_path.rindex("/")+1:]
+          if dict_img_name == img_name:
+            return i 
+          i += 1 
+        return -1
+
+    def create_prev_box_masks(dataset_dicts, d): 
+        '''
+        Create box masks given list of dataset_dicts and current dataset_dict d. 
+        '''
+        # Get the image path and id for the currect dictionary d 
+        img_path = d["file_name"]
+        img_id = d["image_id"]
+
+        # Parse the image name from the image path by taking the 
+        # substring after the last /
+        img_name = img_path[img_path.rindex("/")+1:]
+        prev_img_name = curr_to_prev_filename[img_name]
+        prev_img_id = curr_to_prev_img_id[str(img_id)]
+
+        # Find the index of the previous image in the dataset_dicts list 
+        i = dataset_dicts_index(dataset_dicts, prev_img_name)
+
+        height = 1080
+        width = 1920
+
+        mask = np.zeros([height, width])
+
+        if i == -1: # If the previous image is null 
+          print("Previous image is null.")
+          return mask
+        else: # If the previous image is not null
+          # Get the dictionary and annotations
+          prev_img_dict = dataset_dicts[i]
+          
+          # Visualization for debugging
+          im = cv2.imread(prev_img_dict["file_name"])
+          visualizer = Visualizer(img[:, :, ::-1], metadata=luderick_train_metadata, scale=0.5)
+          out = visualizer.draw_dataset_dict(prev_img_dict)
+          cv2_imshow(out.get_image()[:, :, ::-1])
+
+          annotations = prev_img_dict["annotations"]
+
+          for annotation in annotations: 
+            # Making each location of the bounding box white by setting the mask to 
+            # 255. 
+            bbox = annotation["bbox"]
+            y = bbox[1]
+            x = bbox[0]
+            w = bbox[2]
+            h = bbox[3]
+
+            for i in range(y,y+h+1):
+              for j in range(x,x+w+1):
+                mask[i,j] = 255
+            
+          return mask
+
+    def two_dim_gaussian(pt, mu, sigma):
+        '''
+        Given pt = (x, y), mu = (mu_x, mu_y), and sigma = (sigma_x, sigma_y), 
+        compute value of 2D Gaussian with parameters
+        mu and sigma at (x, y).
+        '''
+        x, y = pt
+        mu_x, mu_y = mu
+        sig_x, sig_y = sigma
+        
+        # Setting amplitude for RGB
+        amp = 255
+        inner_term = (((x - mu_x) ** 2) / (2 * sig_x ** 2) 
+                      + ((y - mu_y) ** 2) / (2 * sig_y ** 2))
+        
+        return amp * np.exp(-1 * inner_term)
+
+    def create_prev_gaussian_masks(dataset_dicts, d): 
+        '''
+        Create gaussian box masks given list of dataset_dicts and 
+        current dataset_dict d. 
+        '''
+         # Get the image path and id for the currect dictionary d 
+        img_path = d["file_name"]
+        img_id = d["image_id"]
+
+        # Parse the image name from the image path by taking the 
+        # substring after the last /
+        img_name = img_path[img_path.rindex("/")+1:]
+        prev_img_name = curr_to_prev_filename[img_name]
+        prev_img_id = curr_to_prev_img_id[str(img_id)]
+
+        # Find the index of the previous image in the dataset_dicts list 
+        i = dataset_dicts_index(dataset_dicts, prev_img_name)
+
+        height = 1080
+        width = 1920
+
+        mask = np.zeros([height, width])
+
+        if i == -1: # If the previous image is null 
+          print("Previous image is null.")
+          return mask
+        else: # If the previous image is not null
+          # Get the dictionary and annotations
+          prev_img_dict = dataset_dicts[i]
+          
+          # Visualization for debugging
+          im = cv2.imread(prev_img_dict["file_name"])
+          visualizer = Visualizer(img[:, :, ::-1], metadata=luderick_train_metadata, scale=0.5)
+          out = visualizer.draw_dataset_dict(prev_img_dict)
+          cv2_imshow(out.get_image()[:, :, ::-1])
+
+          annotations = prev_img_dict["annotations"]
+
+          for annotation in annotations: 
+            # Making each location of the bounding box white by setting the mask to 
+            # 255. 
+            bbox = annotation["bbox"]
+            y = bbox[1]
+            x = bbox[0]
+            w = bbox[2]
+            h = bbox[3]
+
+            # Let the 2D mean (point) be the center of the box.
+            mu_x = x + w / 2
+            mu_y = y + h / 2
+
+            # Let sigma_x and sigma_y, i.e. the standard deviations in each
+            # direction, be one sixth of the length of the box in that dimension.
+            # This way, the function will disappear approximately at the edges
+            # of the box (center + 3x the standard deviation for that direction).
+            sigma_x = w / 6
+            sigma_y = h / 6
+            
+            # For each coordinate in the box, determine it's black/white color
+            for i in range(y, y + h):
+              for j in range(x, x + w):
+                  pt = (j,i)
+                  mu = (mu_x, mu_y)
+                  sigma = (sigma_x, sigma_y)
+                  c_val = int(two_dim_gaussian(pt, mu, sigma))
+                  mask[i,j] = c_val
+
+          return mask
+
+    #dataset_dicts = get_balloon_dicts("balloon/train")
+    luderick_train_metadata = MetadataCatalog.get("luderick_train_a")
+    dataset_dicts = DatasetCatalog.get("luderick_train_a")
+
     def update_dataset_dicts(filename, boxes):
-        self.dataset_dicts[filename] = boxes
+        # Optimally, want dataset_dicts to have the same format as 
+        # the dataset dicts for detectron2
+        # self.dataset_dicts[filename] =
 
     def __call__(self, dataset_dict):
         """
@@ -133,7 +291,15 @@ class DatasetMapper:
         """
         dataset_dict = copy.deepcopy(dataset_dict)  # it will be modified by code below
         # USER: Write your own image loading if it's not from a file
+        # image should be HWC numpy array
         image = utils.read_image(dataset_dict["file_name"], format=self.image_format)
+        
+        # Add the 4th channel to the image 
+        fourth_ch = create_prev_box_masks(self.dataset_dicts, dataset_dict) 
+        numpy.dstack((fourth_channel, image))
+        print(np.shape(image))
+        print(image)
+
         utils.check_image_size(dataset_dict, image)
 
         # USER: Remove if you don't do semantic/panoptic segmentation.
