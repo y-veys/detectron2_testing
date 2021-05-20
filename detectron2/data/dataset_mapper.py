@@ -126,7 +126,7 @@ class DatasetMapper:
             )
         return ret
 
-    def dataset_dicts_index(dataset_dicts, img_name):
+    def dataset_dicts_index(self, dataset_dicts, img_name):
         '''
         Iterate through the dataset_dicts list and find the index of the image
         with id img_id. If the image cannot be found, -1 is returned. 
@@ -140,7 +140,7 @@ class DatasetMapper:
           i += 1 
         return -1
 
-    def create_prev_box_masks(dataset_dicts, d): 
+    def create_prev_box_masks(self, dataset_dicts, d): 
         '''
         Create box masks given list of dataset_dicts and current dataset_dict d. 
         '''
@@ -192,7 +192,7 @@ class DatasetMapper:
             
           return mask
 
-    def two_dim_gaussian(pt, mu, sigma):
+    def two_dim_gaussian(self, pt, mu, sigma):
         '''
         Given pt = (x, y), mu = (mu_x, mu_y), and sigma = (sigma_x, sigma_y), 
         compute value of 2D Gaussian with parameters
@@ -209,7 +209,7 @@ class DatasetMapper:
         
         return amp * np.exp(-1 * inner_term)
 
-    def create_prev_gaussian_masks(dataset_dicts, d): 
+    def create_prev_gaussian_masks(self, dataset_dicts, d): 
         '''
         Create gaussian box masks given list of dataset_dicts and 
         current dataset_dict d. 
@@ -278,7 +278,7 @@ class DatasetMapper:
 
           return mask
 
-    def update_dataset_dicts(filename, boxes):
+    def update_dataset_dicts(self, filename, boxes):
         # Optimally, want dataset_dicts to have the same format as 
         # the dataset dicts for detectron2
         self.dataset_dicts[filename] = boxes
