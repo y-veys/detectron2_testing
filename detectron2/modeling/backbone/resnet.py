@@ -332,7 +332,7 @@ class BasicStem(CNNBlockBase):
     The standard ResNet stem (layers before the first residual block),
     with a conv, relu and max_pool.
     """
-
+    # Note: changed in_channels=3 to in_channels=4
     def __init__(self, in_channels=3, out_channels=64, norm="BN"):
         """
         Args:
