@@ -10,6 +10,12 @@ from detectron2.config import configurable
 from . import detection_utils as utils
 from . import transforms as T
 
+## Adding some additional libraries for added functions
+# import some common libraries
+import numpy as np
+import os, json, cv2, random
+from google.colab.patches import cv2_imshow
+
 """
 This file contains the default mapping that's applied to "dataset dicts".
 """
@@ -149,7 +155,7 @@ class DatasetMapper:
         prev_img_id = curr_to_prev_img_id[str(img_id)]
 
         # Find the index of the previous image in the dataset_dicts list 
-        i = dataset_dicts_index(dataset_dicts, prev_img_name)
+        i = self.dataset_dicts_index(dataset_dicts, prev_img_name)
 
         height = 1080
         width = 1920
@@ -219,7 +225,7 @@ class DatasetMapper:
         prev_img_id = curr_to_prev_img_id[str(img_id)]
 
         # Find the index of the previous image in the dataset_dicts list 
-        i = dataset_dicts_index(dataset_dicts, prev_img_name)
+        i = self.dataset_dicts_index(dataset_dicts, prev_img_name)
 
         height = 1080
         width = 1920
@@ -267,7 +273,7 @@ class DatasetMapper:
                   pt = (j,i)
                   mu = (mu_x, mu_y)
                   sigma = (sigma_x, sigma_y)
-                  c_val = int(two_dim_gaussian(pt, mu, sigma))
+                  c_val = int(self.two_dim_gaussian(pt, mu, sigma))
                   mask[i,j] = c_val
 
           return mask
@@ -292,7 +298,7 @@ class DatasetMapper:
         
         
         # Add the 4th channel to the image 
-        fourth_ch = create_prev_box_masks(self.dataset_dicts, dataset_dict) 
+        fourth_ch = self.create_prev_box_masks(self.dataset_dicts, dataset_dict) 
         numpy.dstack((fourth_channel, image))
         print(np.shape(image))
         print(image)
