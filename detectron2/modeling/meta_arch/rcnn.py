@@ -222,12 +222,15 @@ class GeneralizedRCNN(nn.Module):
         Normalize, pad and batch the input images.
         """
         # Print some things for testing purposes
+        '''
         test_x_b = batched_inputs[0]
         print('first line:')
         print(test_x_b["image"].to(self.device))
+        '''
 
         images = [x["image"].to(self.device) for x in batched_inputs]
 
+        '''
         test_x = images[0]
         print('second line:')
         print(np.shape(test_x))
@@ -235,6 +238,7 @@ class GeneralizedRCNN(nn.Module):
         print(np.shape(self.pixel_mean))
         print('fourth line:')
         print(np.shape(self.pixel_std))
+        '''
 
         images = [(x - self.pixel_mean) / self.pixel_std for x in images]
         images = ImageList.from_tensors(images, self.backbone.size_divisibility)
