@@ -155,16 +155,17 @@ class DatasetMapper:
         #prev_img_id = self.curr_to_prev_img_id[str(img_id)]
 
         # Find the index of the previous image in the dataset_dicts list 
-        i = self.dataset_dicts_index(self.dataset_dicts, prev_img_name)
+        idx = self.dataset_dicts_index(self.dataset_dicts, prev_img_name)
 
         height = 1080
         width = 1920
 
         mask = np.zeros([height, width])
 
-        if i == -1: # If the previous image is null 
+        if idx == -1: # If the previous image is null 
           #print("Previous image is null.")
-          return mask
+          annotations = d["annotations"]
+
         else: # If the previous image is not null
           # Get the dictionary and annotations
           prev_img_dict = dataset_dicts[i]
@@ -179,21 +180,21 @@ class DatasetMapper:
 
           annotations = prev_img_dict["annotations"]
 
-          for annotation in annotations: 
-            # Making each location of the bounding box white by setting the mask to 
-            # 255. 
-            bbox = annotation["bbox"]
-            y = bbox[1]
-            x = bbox[0]
-            w = bbox[2]
-            h = bbox[3]
+        for annotation in annotations: 
+          # Making each location of the bounding box white by setting the mask to 
+          # 255. 
+          bbox = annotation["bbox"]
+          y = bbox[1]
+          x = bbox[0]
+          w = bbox[2]
+          h = bbox[3]
 
-            for i in range(y,y+h):
-              for j in range(x,x+w):
-                if i >= 0 and i < height and j >= 0 and j < width: 
-                  mask[i,j] = 255
-            
-          return mask
+          for i in range(y,y+h):
+            for j in range(x,x+w):
+              if i >= 0 and i < height and j >= 0 and j < width: 
+                mask[i,j] = 255
+          
+        return mask
 
     def two_dim_gaussian(self, pt, mu, sigma):
         '''
@@ -228,16 +229,16 @@ class DatasetMapper:
         #prev_img_id = self.curr_to_prev_img_id[str(img_id)]
 
         # Find the index of the previous image in the dataset_dicts list 
-        i = self.dataset_dicts_index(dataset_dicts, prev_img_name)
+        idx = self.dataset_dicts_index(dataset_dicts, prev_img_name)
 
         height = 1080
         width = 1920
 
         mask = np.zeros([height, width])
 
-        if i == -1: # If the previous image is null 
+        if idx == -1: # If the previous image is null 
           #print("Previous image is null.")
-          return mask
+          annotations = d["annotations"]
         else: # If the previous image is not null
           # Get the dictionary and annotations
           prev_img_dict = dataset_dicts[i]
@@ -252,37 +253,37 @@ class DatasetMapper:
 
           annotations = prev_img_dict["annotations"]
 
-          for annotation in annotations: 
-            # Making each location of the bounding box white by setting the mask to 
-            # 255. 
-            bbox = annotation["bbox"]
-            y = bbox[1]
-            x = bbox[0]
-            w = bbox[2]
-            h = bbox[3]
+        for annotation in annotations: 
+          # Making each location of the bounding box white by setting the mask to 
+          # 255. 
+          bbox = annotation["bbox"]
+          y = bbox[1]
+          x = bbox[0]
+          w = bbox[2]
+          h = bbox[3]
 
-            # Let the 2D mean (point) be the center of the box.
-            mu_x = x + w / 2
-            mu_y = y + h / 2
+          # Let the 2D mean (point) be the center of the box.
+          mu_x = x + w / 2
+          mu_y = y + h / 2
 
-            # Let sigma_x and sigma_y, i.e. the standard deviations in each
-            # direction, be one sixth of the length of the box in that dimension.
-            # This way, the function will disappear approximately at the edges
-            # of the box (center + 3x the standard deviation for that direction).
-            sigma_x = w / 6
-            sigma_y = h / 6
-            
-            # For each coordinate in the box, determine it's black/white color
-            for i in range(y, y + h):
-              for j in range(x, x + w):
-                  if i >= 0 and i < height and j >= 0 and j < width: 
-                    pt = (j,i)
-                    mu = (mu_x, mu_y)
-                    sigma = (sigma_x, sigma_y)
-                    c_val = int(self.two_dim_gaussian(pt, mu, sigma))
-                    mask[i,j] = c_val
+          # Let sigma_x and sigma_y, i.e. the standard deviations in each
+          # direction, be one sixth of the length of the box in that dimension.
+          # This way, the function will disappear approximately at the edges
+          # of the box (center + 3x the standard deviation for that direction).
+          sigma_x = w / 6
+          sigma_y = h / 6
+          
+          # For each coordinate in the box, determine it's black/white color
+          for i in range(y, y + h):
+            for j in range(x, x + w):
+                if i >= 0 and i < height and j >= 0 and j < width: 
+                  pt = (j,i)
+                  mu = (mu_x, mu_y)
+                  sigma = (sigma_x, sigma_y)
+                  c_val = int(self.two_dim_gaussian(pt, mu, sigma))
+                  mask[i,j] = c_val
 
-          return mask
+        return mask
 
     def update_dataset_dicts(self, filename, boxes):
         # Optimally, want dataset_dicts to have the same format as 
