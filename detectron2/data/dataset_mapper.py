@@ -168,7 +168,7 @@ class DatasetMapper:
 
         else: # If the previous image is not null
           # Get the dictionary and annotations
-          prev_img_dict = dataset_dicts[i]
+          prev_img_dict = dataset_dicts[idx]
           
           '''
           # Visualization for debugging
@@ -241,7 +241,7 @@ class DatasetMapper:
           annotations = d["annotations"]
         else: # If the previous image is not null
           # Get the dictionary and annotations
-          prev_img_dict = dataset_dicts[i]
+          prev_img_dict = dataset_dicts[idx]
           
           '''
           # Visualization for debugging
