@@ -114,6 +114,8 @@ def _log_classification_stats(pred_logits, gt_classes, prefix="fast_rcnn"):
         storage.put_scalar(f"{prefix}/fg_cls_accuracy", fg_num_accurate / num_fg)
         storage.put_scalar(f"{prefix}/false_negative", num_false_negative / num_fg)
 
+    storage.put_scaler("Dummy Variable", 3.14)
+
 
 def fast_rcnn_inference_single_image(
     boxes,
