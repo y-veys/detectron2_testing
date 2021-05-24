@@ -94,6 +94,8 @@ def _log_classification_stats(pred_logits, gt_classes, prefix="fast_rcnn"):
         gt_classes: R labels
     """
     num_instances = gt_classes.numel()
+    print(num_instances)
+    exit()
     if num_instances == 0:
         return
     pred_classes = pred_logits.argmax(dim=1)
