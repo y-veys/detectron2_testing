@@ -100,29 +100,28 @@ def _log_classification_stats(pred_logits, gt_classes, prefix="fast_rcnn"):
     bg_class_ind = pred_logits.shape[1] - 1
 
     print(num_instances)
-    print(pred_logits)
-    print(pred_logits.size())
-    print(gt_classes) 
-    print(gt_classes.size())
-    print(pred_classes)
-    print(pred_classes.size())
+    #print(pred_logits)
+    #print(pred_logits.size())
+    #print(gt_classes) 
+    #print(gt_classes.size())
+    #print(pred_classes)
+    #print(pred_classes.size())
 
     fg_inds = (gt_classes >= 0) & (gt_classes < bg_class_ind)
-    print(fg_inds)
+    #print(fg_inds)
     num_fg = fg_inds.nonzero().numel()
-    print(num_fg)
+    #print(num_fg)
     fg_gt_classes = gt_classes[fg_inds]
-    print(fg_gt_classes)
+    #print(fg_gt_classes)
     fg_pred_classes = pred_classes[fg_inds]
-    print(fg_pred_classes)
+    #print(fg_pred_classes)
 
     num_false_negative = (fg_pred_classes == bg_class_ind).nonzero().numel()
-    print(num_false_negative)
+    #print(num_false_negative)
     num_accurate = (pred_classes == gt_classes).nonzero().numel()
-    print(num_accurate)
+    #print(num_accurate)
     fg_num_accurate = (fg_pred_classes == fg_gt_classes).nonzero().numel()
-    print(fg_num_accurate)
-    exit()
+    #print(fg_num_accurate)
 
     storage = get_event_storage()
     storage.put_scalar(f"{prefix}/cls_accuracy", num_accurate / num_instances)
