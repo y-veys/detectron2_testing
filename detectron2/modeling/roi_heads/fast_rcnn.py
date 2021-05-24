@@ -442,7 +442,6 @@ class FastRCNNOutputLayers(nn.Module):
             Second tensor: bounding box regression deltas for each box. Shape is shape (N,Kx4),
             or (N,4) for class-agnostic regression.
         """
-        print(x.size())
         if x.dim() > 2:
             x = torch.flatten(x, start_dim=1)
         scores = self.cls_score(x)
