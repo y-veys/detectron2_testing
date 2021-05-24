@@ -101,8 +101,11 @@ def _log_classification_stats(pred_logits, gt_classes, prefix="fast_rcnn"):
 
     print(num_instances)
     print(pred_logits)
+    print(pred_logits.size())
     print(gt_classes) 
+    print(pred_lgt_classes.size())
     print(pred_classes)
+    print(pred_classes.size())
     exit()
 
     fg_inds = (gt_classes >= 0) & (gt_classes < bg_class_ind)
