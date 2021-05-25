@@ -99,29 +99,22 @@ def _log_classification_stats(pred_logits, gt_classes, prefix="fast_rcnn"):
     pred_classes = pred_logits.argmax(dim=1)
     bg_class_ind = pred_logits.shape[1] - 1
 
-    print(num_instances)
-    #print(pred_logits)
-    #print(pred_logits.size())
-    #print(gt_classes) 
-    #print(gt_classes.size())
-    #print(pred_classes)
-    #print(pred_classes.size())
-
     fg_inds = (gt_classes >= 0) & (gt_classes < bg_class_ind)
-    #print(fg_inds)
     num_fg = fg_inds.nonzero().numel()
-    #print(num_fg)
     fg_gt_classes = gt_classes[fg_inds]
-    #print(fg_gt_classes)
     fg_pred_classes = pred_classes[fg_inds]
-    #print(fg_pred_classes)
+
+    bg_inds = (gt_classes == bg_class_ind)
+    num_bg = bg_inds.nonzero().numel()
+    bg_gt_classes = gt_classes[bg_inds]
+    bg_pred_classes = pred_classes[bg_inds]
 
     num_false_negative = (fg_pred_classes == bg_class_ind).nonzero().numel()
-    #print(num_false_negative)
     num_accurate = (pred_classes == gt_classes).nonzero().numel()
-    #print(num_accurate)
     fg_num_accurate = (fg_pred_classes == fg_gt_classes).nonzero().numel()
-    #print(fg_num_accurate)
+
+    num_false_positive = (bg_pred_classes < bg_class_ind).nonzero().numel()
+    bg_num_accurate = (bg_pred_classes == bg_gt_classes).nonzero().numel()
 
     storage = get_event_storage()
     storage.put_scalar(f"{prefix}/cls_accuracy", num_accurate / num_instances)
@@ -129,7 +122,11 @@ def _log_classification_stats(pred_logits, gt_classes, prefix="fast_rcnn"):
         storage.put_scalar(f"{prefix}/fg_cls_accuracy", fg_num_accurate / num_fg)
         storage.put_scalar(f"{prefix}/false_negative", num_false_negative / num_fg)
 
-    storage.put_scalar("Dummy Variable", 3.14)
+    if num_bg > 0:
+        storage.put_scalar(f"{prefix}/bg_cls_accuracy", bg_num_accurate / num_bg)
+        storage.put_scalar(f"{prefix}/false_positive", num_false_positive / num_bg)
+
+
 
 
 def fast_rcnn_inference_single_image(
