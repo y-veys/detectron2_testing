@@ -393,6 +393,7 @@ class AMPTrainer(SimpleTrainer):
         self.optimizer.zero_grad()
         self.grad_scaler.scale(losses).backward()
 
+        print(loss_dict)
         self._write_metrics(loss_dict, data_time)
 
         self.grad_scaler.step(self.optimizer)
