@@ -126,6 +126,9 @@ def _log_classification_stats(pred_logits, gt_classes, prefix="fast_rcnn"):
         storage.put_scalar(f"{prefix}/bg_cls_accuracy", bg_num_accurate / num_bg)
         storage.put_scalar(f"{prefix}/false_positive", num_false_positive / num_bg)
 
+    storage.put_scalar(f"{prefix}/num_bg", num_bg)
+    storage.put_scalar(f"{prefix}/num_fg", num_fg)
+
 
 
 
