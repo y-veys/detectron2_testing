@@ -62,6 +62,8 @@ class DetectionCheckpointer(Checkpointer):
         if filename.endswith(".pkl"):
             with PathManager.open(filename, "rb") as f:
                 data = pickle.load(f, encoding="latin1")
+            with open('benchmark_weights.pkl', 'wb') as handle:
+                pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
             if "model" in data and "__author__" in data:
                 # file is in Detectron2 model zoo format
                 self.logger.info("Reading a file from '{}'".format(data["__author__"]))
