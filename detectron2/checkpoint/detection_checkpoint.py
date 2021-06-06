@@ -96,7 +96,6 @@ class DetectionCheckpointer(Checkpointer):
 
     def _load_model(self, checkpoint):
         if checkpoint.get("matching_heuristics", False):
-            print("THIS GETS CALLED")
             self._convert_ndarray_to_tensor(checkpoint["model"])
             # convert weights by name-matching heuristics
             checkpoint["model"] = align_and_update_state_dicts(
@@ -117,10 +116,4 @@ class DetectionCheckpointer(Checkpointer):
                     incompatible.missing_keys.remove(k)
                 except ValueError:
                     pass
-
-        model = checkpoint["model"]
-        for key in model.keys():
-            print(key)
-        exit()
-
         return incompatible

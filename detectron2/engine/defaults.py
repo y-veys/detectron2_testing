@@ -418,6 +418,13 @@ class DefaultTrainer(TrainerBase):
             resume (bool): whether to do resume or not
         """
         self.checkpointer.resume_or_load(self.cfg.MODEL.WEIGHTS, resume=resume)
+        weights = self.cfg.MODEL.WEIGHTS
+
+        print(weights)
+        print(type(weights))
+        for key in weights.keys():
+            print(key)
+            
         if resume and self.checkpointer.has_checkpoint():
             # The checkpoint stores the training iteration that just finished, thus we start
             # at the next iteration
