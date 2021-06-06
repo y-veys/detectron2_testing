@@ -117,4 +117,10 @@ class DetectionCheckpointer(Checkpointer):
                     incompatible.missing_keys.remove(k)
                 except ValueError:
                     pass
+
+        model = checkpoint["model"]
+        for key in model.keys():
+            print(key)
+        exit()
+
         return incompatible
