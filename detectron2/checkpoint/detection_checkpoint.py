@@ -95,6 +95,7 @@ class DetectionCheckpointer(Checkpointer):
         return loaded
 
     def _load_model(self, checkpoint):
+        
         if checkpoint.get("matching_heuristics", False):
             self._convert_ndarray_to_tensor(checkpoint["model"])
             # convert weights by name-matching heuristics
@@ -105,6 +106,7 @@ class DetectionCheckpointer(Checkpointer):
             )
 
             print(checkpoint["model"])
+
         # for non-caffe2 models, use standard ways to load it
         incompatible = super()._load_model(checkpoint)
 
