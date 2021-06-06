@@ -103,8 +103,11 @@ class DetectionCheckpointer(Checkpointer):
                 checkpoint["model"],
                 c2_conversion=checkpoint.get("__author__", None) == "Caffe2",
             )
+
+            print(checkpoint["model"])
         # for non-caffe2 models, use standard ways to load it
         incompatible = super()._load_model(checkpoint)
+
 
         model_buffers = dict(self.model.named_buffers(recurse=False))
         for k in ["pixel_mean", "pixel_std"]:
@@ -117,10 +120,6 @@ class DetectionCheckpointer(Checkpointer):
                 except ValueError:
                     pass
 
-        model = checkpoint["model"]
-        for key in model.keys():
-            print(key)
-
-        exit()
+        print(incompatible)
 
         return incompatible
