@@ -90,8 +90,8 @@ class _ModelZooUrls(object):
         """
         name = config_path.replace(".yaml", "").replace(".py", "")
 
-        #if name == "COCO-Detection/faster_rcnn_R_50_DC5_3x": 
-        #    return "model_final_68d202_edited.pkl"
+        if name == "COCO-Detection/faster_rcnn_R_50_DC5_3x": 
+            return "model_final_68d202_edited.pkl"
 
         if name in _ModelZooUrls.CONFIG_PATH_TO_URL_SUFFIX:
             suffix = _ModelZooUrls.CONFIG_PATH_TO_URL_SUFFIX[name]
